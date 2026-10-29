@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <application
+        android:name="com.funny.translation.translate.FunnyApplication"
+        android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher_ada"
+        android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:theme="@style/AppTheme"
+        android:resizeableActivity="true"
+        tools:targetApi="33"
+        tools:ignore="Instantiatable"> <!-- 由于 Activity 继承的 BaseActivity 只是在 Android 上间接继承 AppCompatActivity，Activity会报这个警告，忽略掉 -->
+
+        <activity
+            android:name="com.funny.translation.translate.TransActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}" -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="funny"
+                    android:host="translation"
+                    android:pathPattern="/image_translate"
+                    />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="translation"
+                    android:scheme="funny"
+                    android:pathPattern="/translate"
+                    />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.funny.translation.WebViewActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="com.funny.trans.login.LoginActivity"
+            android:launchMode="singleTask"
+            android:exported="false" />
+
+        <activity android:name="com.funny.translation.codeeditor.CodeEditorActivity"
+            android:theme="@style/Theme.CodeActivity.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
+            android:label="@string/edit_code"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="code_editor"
+                    android:scheme="funny-trans" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.funny.translation.translate.activity.ErrorDialogActivity"
+            android:label="@string/crash"
+            android:theme="@style/AppTheme.Dialog" />
+        <activity android:name="com.funny.translation.translate.activity.CustomPhotoPickerActivity" />
+
+        <activity
+            android:name="com.funny.translation.translate.activity.ShareActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <!-- 高版本 Android 要读取别人分享过来的图片怎么那么麻烦，不做了不做了 -->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.SEND" />-->
+            <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            <!--                <data android:mimeType="image/*" />-->
+            <!--            </intent-filter>-->
+        </activity>
+
+        <service
+            android:name="com.funny.translation.translate.service.OpenFloatWindowTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_float_window"
+            android:label="@string/transtation_floating_window"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            >
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.funny.translation.translate.service.CaptureScreenService"
+            android:foregroundServiceType="mediaProjection" />
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name="com.funny.translation.translate.activity.StartCaptureScreenActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.Translucent"/>
+
+<!--       java.io.FileNotFoundException: No content provider: file%3A%2F%2F%2Fstorage%2Femulated%2F0%2FAndroid%2Fdata%2Fcom.funny.translation.kmp.debug%2Fcache%2Ftemp_captured_image.jpg -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"
+                tools:replace="android:resource"/>
+        </provider>
+
+    </application>
+
+
+
+</manifest>

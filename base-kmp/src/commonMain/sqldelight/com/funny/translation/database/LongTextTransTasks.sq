@@ -1,0 +1,65 @@
+import kotlin.Int;
+import kotlin.String;
+import kotlin.Pair;
+import kotlin.collections.List;
+import com.funny.translation.bean.EditablePrompt;
+
+CREATE TABLE IF NOT EXISTS longTextTransTasks (
+    id TEXT PRIMARY KEY NOT NULL,
+    chatBotId INTEGER AS Int NOT NULL,
+    sourceText TEXT NOT NULL,
+    resultText TEXT NOT NULL,
+    prompt TEXT AS EditablePrompt NOT NULL,
+    allCorpus TEXT AS List<Pair<String, String>> NOT NULL,
+    sourceTextSegments TEXT AS List<Int> NOT NULL,
+    resultTextSegments TEXT AS List<Int> NOT NULL,
+    translatedLength INTEGER AS Int NOT NULL,
+    remark TEXT NOT NULL DEFAULT '',
+    createTime INTEGER NOT NULL DEFAULT 0,
+    updateTime INTEGER NOT NULL DEFAULT 0
+);
+
+-- Queries for LongTextTransDao
+
+-- Query to select a LongTextTransTask by id
+getById:
+SELECT * FROM longTextTransTasks WHERE id = ?;
+
+-- Query to select all LongTextTransTasks
+getAll:
+SELECT * FROM longTextTransTasks;
+
+-- Query to select all LongTextTransTasks with minimal data, sort by updateTime desc
+getAllMini:
+SELECT id, chatBotId, translatedLength, remark, createTime, updateTime, LENGTH(sourceText) AS sourceTextLength FROM longTextTransTasks
+ORDER BY updateTime DESC;
+
+-- Delete a LongTextTransTask by id
+deleteById:
+DELETE FROM longTextTransTasks WHERE id = ?;
+
+-- Insert or update a LongTextTransTask
+upsert:
+INSERT OR REPLACE INTO longTextTransTasks (id, chatBotId, sourceText, resultText, prompt, allCorpus, sourceTextSegments, resultTextSegments, translatedLength, createTime, updateTime, remark)
+VALUES ?;
+
+-- Insert a LongTextTransTask
+insert:
+INSERT INTO longTextTransTasks (id, chatBotId, sourceText, resultText, prompt, allCorpus, sourceTextSegments, resultTextSegments, translatedLength, createTime, updateTime, remark)
+VALUES ?;
+
+-- Update allCorpus for a LongTextTransTask
+updateAllCorpus:
+UPDATE longTextTransTasks SET allCorpus = ? WHERE id = ?;
+
+-- Update sourceText for a LongTextTransTask
+updateSourceText:
+UPDATE longTextTransTasks SET sourceText = ? WHERE id = ?;
+
+-- Update remark for a LongTextTransTask
+updateRemark:
+UPDATE longTextTransTasks SET remark = ? WHERE id = ?;
+
+-- Update Prompt
+updatePrompt:
+UPDATE longTextTransTasks SET prompt = ? WHERE id = ?;

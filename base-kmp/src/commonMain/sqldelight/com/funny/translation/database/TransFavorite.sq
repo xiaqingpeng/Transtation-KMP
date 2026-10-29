@@ -1,0 +1,37 @@
+import kotlin.Int;
+
+CREATE TABLE IF NOT EXISTS transFavorite (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    sourceString TEXT NOT NULL,
+    resultText TEXT NOT NULL,
+    sourceLanguageId INTEGER AS Int NOT NULL DEFAULT 0,
+    targetLanguageId INTEGER AS Int NOT NULL DEFAULT 0,
+    engineName TEXT NOT NULL DEFAULT '未知引擎',
+    time INTEGER NOT NULL,
+    detailText TEXT DEFAULT ''
+);
+
+-- Queries for TransFavoriteDao
+
+countAll:
+SELECT COUNT(1) FROM transFavorite;
+
+-- Query to select all TransFavoriteBeans with paging
+queryAllPaging:
+SELECT * FROM transFavorite
+ORDER BY id DESC
+LIMIT :limit OFFSET :offset;
+
+-- Insert a TransFavoriteBean
+insertTransFavorite:
+INSERT INTO transFavorite (sourceString, resultText, sourceLanguageId, targetLanguageId, engineName, time, detailText)
+VALUES ?;
+
+-- Delete a TransFavoriteBean
+deleteTransFavorite:
+DELETE FROM transFavorite WHERE id = ?;
+
+-- Query to count TransFavoriteBeans based on criteria
+count:
+SELECT COUNT(1) FROM transFavorite
+WHERE sourceString = ? AND resultText = ? AND sourceLanguageId = ? AND targetLanguageId = ? AND engineName = ?;
